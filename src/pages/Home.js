@@ -6,6 +6,14 @@ class Home extends React.Component {
   state = {
     search: '',
     searchResult: [],
+    listCategories: [],
+  };
+
+  componentDidMount() { this.fetchCategories(); }
+
+  fetchCategories = async () => {
+    const fetchCategories = await api.getCategories();
+    this.setState({ listCategories: fetchCategories });
   };
 
   handleChange = async (event) => {
@@ -19,10 +27,33 @@ class Home extends React.Component {
     this.setState({ searchResult: results });
   };
 
+  renderComponent = () => {
+    const { listCategories } = this.state;
+    return (
+      <div>
+        <div>
+          {
+            listCategories.map((e) => (
+              <button
+                key={ e.id }
+                type="submit"
+                data-testid="category"
+              >
+                {e.name}
+              </button>))
+          }
+        </div>
+      </div>);
+  };
+
   render() {
     const { search, searchResult } = this.state;
     return (
       <div>
+        <h1>home</h1>
+        <div>
+          { this.renderComponent() }
+        </div>
         <label htmlFor="search">
           <input
             id="search"
