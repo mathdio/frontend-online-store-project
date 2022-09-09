@@ -22,9 +22,18 @@ class Home extends React.Component {
   };
 
   handleClick = async (search) => {
-    const searchAPI = await api.getProductsFromCategoryAndQuery(search);
+    const searchAPI = await api.getProductsFromCategoryAndQuery({ query: search });
     const { results } = searchAPI;
     this.setState({ searchResult: results });
+  };
+
+  handleCategorie = async (event) => {
+    const { id } = event.target;
+    const getProducts = await api.getProductsFromCategoryAndQuery({ categoryId: id });
+    const { results } = getProducts;
+    this.setState({
+      searchResult: results,
+    });
   };
 
   renderComponent = () => {
@@ -36,8 +45,10 @@ class Home extends React.Component {
             listCategories.map((e) => (
               <button
                 key={ e.id }
+                id={ e.id }
                 type="submit"
                 data-testid="category"
+                onClick={ this.handleCategorie }
               >
                 {e.name}
               </button>))
