@@ -93,11 +93,20 @@ class Home extends React.Component {
               {searchResult.map((product) => {
                 const { id, title, price, thumbnail } = product;
                 return (
-                  <div key={ id } data-testid="product">
-                    <img src={ thumbnail } alt={ title } />
-                    <h3>{title}</h3>
-                    <p>{price}</p>
-                  </div>
+                  <Link
+                    key={ id }
+                    to={ `/productdetails/${id}` }
+                    data-testid="product-detail-link"
+                  >
+                    <div
+                      key={ id }
+                      data-testid="product"
+                    >
+                      <img src={ thumbnail } alt={ title } />
+                      <h3>{title}</h3>
+                      <p>{price}</p>
+                    </div>
+                  </Link>
                 );
               })}
             </div>)}
