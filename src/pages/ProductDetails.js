@@ -8,6 +8,7 @@ class ProductDetails extends React.Component {
     name: '',
     image: '',
     price: '',
+    amount: 0,
   };
 
   async componentDidMount() {
@@ -19,7 +20,37 @@ class ProductDetails extends React.Component {
       image: thumbnail,
       price,
     });
+    const oldCart = JSON.parse(localStorage.getItem('shoppingCart'));
+    if (oldCart.some((item) => item.name === title)) {
+      const oldItem = oldCart.find((item) => item.name === title);
+      this.setState({
+        amount: oldItem.amount,
+      });
+    }
   }
+
+  handleClick = () => {
+    const { name, image, price, amount } = this.state;
+    this.setState((prevState) => ({
+      amount: prevState.amount + 1,
+    }), () => {
+      if (!localStorage.getItem('shoppingCart')) {
+        const addCart = [{ name, image, price, amount }];
+        localStorage.setItem('shoppingCart', JSON.stringify(addCart));
+      } else {
+        const recoveredCart = JSON.parse(localStorage.getItem('shoppingCart'));
+        if (recoveredCart.some((product) => product.name === name)) {
+          const newCart = recoveredCart.filter((product) => product.name !== name);
+          newCart.push({ name, image, price, amount });
+          localStorage.setItem('shoppingCart', JSON.stringify(newCart));
+        } else {
+          recoveredCart.push({ name, image, price, amount });
+          localStorage.setItem('shoppingCart', JSON.stringify(recoveredCart));
+        }
+      }
+      console.log(JSON.parse(localStorage.getItem('shoppingCart')));
+    });
+  };
 
   render() {
     const { name, image, price } = this.state;
@@ -32,6 +63,13 @@ class ProductDetails extends React.Component {
         />
         <p data-testid="product-detail-name">{name}</p>
         <p data-testid="product-detail-price">{price}</p>
+        <button
+          type="button"
+          data-testid="product-detail-add-to-cart"
+          onClick={ this.handleClick }
+        >
+          Adicionar no carrinho
+        </button>
         <Link to="/shoppingcart">
           <button
             type="button"
