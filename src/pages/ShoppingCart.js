@@ -34,7 +34,7 @@ class ShoppingCart extends React.Component {
       <div>
         {(listFilter.length > 0) ? listFilter.map((e) => (
 
-          <div key={ e.id } data-testid="shopping-cart-product-name">
+          <div key={ e.id }>
             <img src={ e.thumbnail } alt={ e.title } />
             <h3 data-testid="shopping-cart-product-name">{e.title}</h3>
             <h3 data-testid="shopping-cart-product-quantity">
