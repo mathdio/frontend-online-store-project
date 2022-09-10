@@ -20,8 +20,9 @@ class ProductDetails extends React.Component {
       image: thumbnail,
       price,
     }, () => {
+      const { name } = this.state;
       const oldCart = JSON.parse(localStorage.getItem('shoppingCart'));
-      if (oldCart.some((item) => item.name === title)) {
+      if (oldCart && oldCart.some((item) => item.name === name)) {
         const oldItem = oldCart.find((item) => item.name === title);
         this.setState({
           amount: oldItem.amount,
