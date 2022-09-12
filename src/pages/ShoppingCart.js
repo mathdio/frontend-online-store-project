@@ -68,8 +68,7 @@ class ShoppingCart extends React.Component {
 
   renderCartComponents = () => {
     const { shopCartProducts } = this.state;
-    const listFilter = this.noRepeatElementsArray(shopCartProducts
-      .sort(this.calbackSort));
+    const listFilter = this.noRepeatElementsArray(shopCartProducts);
 
     return (
       <div>
