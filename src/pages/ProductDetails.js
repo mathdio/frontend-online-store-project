@@ -8,7 +8,7 @@ class ProductDetails extends React.Component {
     name: '',
     image: '',
     price: '',
-    amount: 0,
+    product: {},
   };
 
   async componentDidMount() {
@@ -19,41 +19,19 @@ class ProductDetails extends React.Component {
       name: title,
       image: thumbnail,
       price,
-    }, () => {
-      const { name } = this.state;
-      const oldCart = JSON.parse(localStorage.getItem('shoppingCart'));
-      if (oldCart && oldCart.some((item) => item.name === name)) {
-        const oldItem = oldCart.find((item) => item.name === title);
-        this.setState({
-          amount: oldItem.amount,
-        });
-      }
+      product,
     });
   }
 
   handleClick = () => {
-    this.setState((prevState) => ({
-      amount: prevState.amount + 1,
-    }), () => {
-      const { name, image, price, amount } = this.state;
-      if (!localStorage.getItem('shoppingCart')) {
-        const addCart = [{ name, image, price, amount }];
-        localStorage.setItem('shoppingCart', JSON.stringify(addCart));
-      } else {
-        const recoveredCart = JSON.parse(localStorage.getItem('shoppingCart'));
-        console.log(JSON.parse(localStorage.getItem('shoppingCart')));
-        if (recoveredCart.some((product) => product.name === name)) {
-          const newCart = recoveredCart.filter((product) => product.name !== name);
-          newCart.push({ name, image, price, amount });
-          localStorage.setItem('shoppingCart', JSON.stringify(newCart));
-          console.log(JSON.parse(localStorage.getItem('shoppingCart')));
-        } else {
-          recoveredCart.push({ name, image, price, amount });
-          localStorage.setItem('shoppingCart', JSON.stringify(recoveredCart));
-        }
-      }
-      console.log(JSON.parse(localStorage.getItem('shoppingCart')));
-    });
+    const { product } = this.state;
+    const oldCart = JSON.parse(localStorage.getItem('shoppingCart'));
+    if (!oldCart) {
+      localStorage.setItem('shoppingCart', JSON.stringify([product]));
+    } else {
+      const newCart = [...oldCart, product];
+      localStorage.setItem('shoppingCart', JSON.stringify(newCart));
+    }
   };
 
   render() {
