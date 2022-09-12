@@ -19,7 +19,7 @@ class ShoppingCart extends React.Component {
     const arrayUnique = [];
     const str = (obj) => JSON.stringify(obj);
     array.forEach((e) => {
-      const temp = arrayUnique.some((i) => str(i) === str(e));
+      const temp = arrayUnique.some((i) => str(i.title) === str(e.title));
       if (!temp) {
         arrayUnique.push(e);
       }
