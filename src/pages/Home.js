@@ -7,9 +7,19 @@ class Home extends React.Component {
     search: '',
     searchResult: [],
     listCategories: [],
+    shopCartProducts: [],
   };
 
-  componentDidMount() { this.fetchCategories(); }
+  componentDidMount() {
+    this.fetchCategories();
+    this.initShopCart();
+  }
+
+  initShopCart = async () => {
+    const cartStorage = localStorage.getItem('shoppingCart');
+    const temp = cartStorage ? JSON.parse(cartStorage) : [];
+    this.setState({ shopCartProducts: temp });
+  };
 
   fetchCategories = async () => {
     const fetchCategories = await api.getCategories();
@@ -36,10 +46,22 @@ class Home extends React.Component {
     });
   };
 
+  addProductToCart = (event) => {
+    const { searchResult, shopCartProducts } = this.state;
+    const { name } = event.target;
+    const product = searchResult.filter((e) => e.id === name);
+    const listCart = shopCartProducts;
+    listCart.push(...product);
+    this.setState({ shopCartProducts: listCart }, async () => {
+      localStorage.setItem('shoppingCart', JSON.stringify(shopCartProducts));
+    });
+  };
+
   renderComponent = () => {
     const { listCategories } = this.state;
     return (
       <div>
+        <Link to="/shoppingcart">Carrinho</Link>
         <div>
           {
             listCategories.map((e) => (
@@ -91,12 +113,31 @@ class Home extends React.Component {
           : (
             <div>
               {searchResult.map((product) => {
+                console.log(product);
                 const { id, title, price, thumbnail } = product;
                 return (
-                  <div key={ id } data-testid="product">
-                    <img src={ thumbnail } alt={ title } />
-                    <h3>{title}</h3>
-                    <p>{price}</p>
+                  <div key={ id }>
+                    <Link
+                      to={ `/productdetails/${id}` }
+                      data-testid="product-detail-link"
+                    >
+                      <div
+                        key={ id }
+                        data-testid="product"
+                      >
+                        <img src={ thumbnail } alt={ title } />
+                        <h3>{title}</h3>
+                        <p>{price}</p>
+                      </div>
+                    </Link>
+                    <button
+                      name={ id }
+                      type="submit"
+                      data-testid="product-add-to-cart"
+                      onClick={ this.addProductToCart }
+                    >
+                      Adicionar ao Carrinho
+                    </button>
                   </div>
                 );
               })}
