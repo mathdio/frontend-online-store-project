@@ -15,6 +15,36 @@ class ShoppingCart extends React.Component {
     this.setState({ shopCartProducts: temp });
   };
 
+  incrementProductInCard = (event) => {
+    const { name } = event.target;
+    const { shopCartProducts } = this.state;
+    const product = shopCartProducts.filter((e) => e.id === name)[0];
+    const listCart = shopCartProducts;
+    listCart.push(product);
+    localStorage.setItem('shoppingCart', JSON.stringify(shopCartProducts));
+    this.setState({ shopCartProducts: JSON.parse(localStorage.getItem('shoppingCart')) });
+  };
+
+  decrementProductInCart = (event) => {
+    const { name } = event.target;
+    const { shopCartProducts } = this.state;
+    const listThisProduct = shopCartProducts.filter((e) => e.id === name);
+    const listOtherProducts = shopCartProducts.filter((e) => e.id !== name);
+    const newThis = listThisProduct.length > 1
+      ? listThisProduct.slice(1) : listThisProduct;
+    const temp = [...listOtherProducts, ...newThis];
+    localStorage.setItem('shoppingCart', JSON.stringify(temp));
+    this.setState({ shopCartProducts: JSON.parse(localStorage.getItem('shoppingCart')) });
+  };
+
+  deleteProductInShopCart = (event) => {
+    const { name } = event.target;
+    const { shopCartProducts } = this.state;
+    const newListProduct = shopCartProducts.filter((e) => e.id !== name);
+    localStorage.setItem('shoppingCart', JSON.stringify(newListProduct));
+    this.setState({ shopCartProducts: JSON.parse(localStorage.getItem('shoppingCart')) });
+  };
+
   noRepeatElementsArray = (array = []) => {
     const arrayUnique = [];
     const str = (obj) => JSON.stringify(obj);
@@ -30,6 +60,7 @@ class ShoppingCart extends React.Component {
   renderCartComponents = () => {
     const { shopCartProducts } = this.state;
     const listFilter = this.noRepeatElementsArray(shopCartProducts);
+
     return (
       <div>
         {(listFilter.length > 0) ? listFilter.map((e) => (
@@ -37,10 +68,39 @@ class ShoppingCart extends React.Component {
           <div key={ e.id }>
             <img src={ e.thumbnail } alt={ e.title } />
             <h3 data-testid="shopping-cart-product-name">{e.title}</h3>
-            <h3 data-testid="shopping-cart-product-quantity">
-              {`Qtd: ${shopCartProducts.filter((i) => (i.id === e.id)).length}`}
+            <button
+              type="submit"
+              data-testid="product-increase-quantity"
+              name={ e.id }
+              onClick={ this.incrementProductInCard }
+            >
+              +
+            </button>
+            <button
+              name={ e.id }
+              onClick={ this.decrementProductInCart }
+              type="submit"
+              data-testid="product-decrease-quantity"
+            >
+              -
+            </button>
+
+            <button
+              name={ e.id }
+              type="submit"
+              data-testid="remove-product"
+              onClick={ this.deleteProductInShopCart }
+            >
+              Excluir
+            </button>
+            <h3
+              data-testid="shopping-cart-product-quantity"
+            >
+              {`Qtd:  ${shopCartProducts.filter((i) => (i.id === e.id)).length}     |` }
+              {`  R$ ${e.price.toFixed(2)}     |`}
+              {` Total: R$${(e.price * shopCartProducts
+                .filter((i) => (i.id === e.id)).length).toFixed(2)}`}
             </h3>
-            <p>{e.price}</p>
           </div>
 
         )) : <h3>Seu carrinho está vazio</h3>}
